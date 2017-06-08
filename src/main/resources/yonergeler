@@ -1,0 +1,7 @@
+entity'lerin db deki karşılıkları t_ ile başlamalı
+ör: class: User db: t_user
+
+classtaki fieldlardaki kelimelerin ayrımı büyük/küçük harf db deki fieldların ise alttire ile
+ör: class: firstName db:first_name
+
+

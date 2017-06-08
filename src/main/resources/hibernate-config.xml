@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd   http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+
+
+    <context:component-scan base-package="com.ekocbiyik.tdmdemo"/>
+    <context:annotation-config/>
+    <context:property-placeholder location="classpath:/hibernate.properties"/>
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+    <mvc:annotation-driven/>
+
+    <!--burası MainUI içindeki reserve bbkları temizlemek için tetiklenen task'a ait-->
+    <task:annotation-driven/>
+    <bean id="clearReservedPstnBbk" class="com.ekocbiyik.tdmdemo.MainUI"></bean>
+
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.SingleConnectionDataSource">
+        <property name="driverClassName" value="${db.driverClassName}"></property>
+        <property name="url" value="${db.url}"></property>
+        <property name="username" value="${db.username}"/>
+        <property name="password" value="${db.password}"/>
+        <property name="suppressClose" value="true"/>
+    </bean>
+
+
+    <bean id="hibernateCfgProperties"
+          class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="properties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</prop>
+                <prop key="hibernate.hbm2ddl.auto">update</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.format_sql">false</prop>
+                <prop key="hibernate.use_sql_comments">true</prop>
+                <prop key="hibernate.cache.use_second_level_cache">true</prop>
+                <prop key="hibernate.cache.use_query_cache">true</prop>
+                <prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.SingletonEhCacheRegionFactory</prop>
+
+                <!--db timeout olmasın diye-->
+                <prop key="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</prop>
+                <prop key="hibernate.c3p0.testConnectionOnCheckout">true</prop>
+                <prop key="hibernate.c3p0.timeout">1800</prop>
+                <prop key="hibernate.c3p0.maxIdleTimeExcessConnections">20</prop>
+
+                <!--  Connection testing settings -->
+                <prop key="hibernate.c3p0.validate">false</prop>
+                <prop key="hibernate.c3p0.idle_test_period">30</prop>
+                <prop key="hibernate.c3p0.automaticTestTable">conTestTable</prop>
+
+
+            </props>
+        </property>
+    </bean>
+
+    <bean id="sessionFactory"
+          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="hibernateProperties" ref="hibernateCfgProperties"/>
+        <property name="packagesToScan" value="com.ekocbiyik.tdmdemo.model"/>
+    </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+</beans>

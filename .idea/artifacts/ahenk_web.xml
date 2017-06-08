@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="ahenk:web">
+    <output-path>$PROJECT_DIR$/out/artifacts/ahenk_web</output-path>
+    <root id="archive" name="AHENK_war.war">
+      <element id="artifact" artifact-name="AHENK:war exploded" />
+    </root>
+  </artifact>
+</component>
